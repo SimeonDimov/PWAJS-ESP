@@ -1,0 +1,194 @@
+@ -1,193 +0,0 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PWA dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!--Font Open Sans-->
+
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+  <script src="scripts.js"></script>
+  <link rel="stylesheet" type="text/css" href="loading-bar.css" />
+  <script type="text/javascript" src="loading-bar.js"></script>
+
+</head>
+
+<body>
+  <script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-database.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <div class="grid-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="menu-icon" onclick="openSidebar()">
+        <span class="material-icons-outlined">menu</span>
+      </div>
+      < </header>
+        <!-- End Header -->
+
+        <!-- Sidebar -->
+        <aside id="sidebar">
+          <div class="sidebar-title">
+            <div class="sidebar-brand">
+              <span class="material-icons-outlined">inventory</span> PWA Dashboard
+            </div>
+            <span class="material-icons-outlined" onclick="closeSidebar()">close</span>
+          </div>
+
+          <ul class="sidebar-list">
+            <li class="sidebar-list-item">
+              <span class="material-icons-outlined">dashboard</span> Dashboard
+            </li>
+            <li class="sidebar-list-item">
+              <span class="material-icons-outlined">event_busy </span> Events
+            </li>
+          </ul>
+        </aside>
+        <!-- End Sidebar -->
+
+        <!-- Main -->
+        <main class="main-container">
+          <div class="main-title">
+            <p class="font-weight-bold">DASHBOARD</p>
+          </div>
+
+          <div class="main-cards">
+            <div class="card">
+              <div class="card-inner">
+                <p class="text-primary">Potential crash</p>
+                <span class="material-icons-outlined text-blue icon">inventory_2</span>
+              </div>
+              <span class="text-primary font-weight-bold">
+                <div id="test"></div>
+              </span>
+            </div>
+
+            <div class="card">
+              <div class="card-inner">
+                <p class="text-primary">Loading level</p>
+                <span class="material-icons-outlined text-blue icon">
+                  scale
+                </span>
+                <!-- <div id="weightElement" data-preset="fan" class="ldBar label-center" data-value="60"></div> -->
+
+              </div>
+              <div class="ldBar label-center"></div>
+            </div>
+
+            <div id="dates">
+
+            </div>
+
+
+
+          </div>
+
+
+  </div>
+
+  </main>
+  <!-- End Main -->
+
+  </div>
+
+
+
+
+  <!-- Custom JS -->
+
+  <script>
+    // Import the functions you need from the SDKs you need
+
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+
+
+    const bar = new ldBar(".ldBar", {
+      "value": 0,
+      "preset": "fan",
+    });
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyA5pI9g1mfA30pWmI7O8lTAMkZA6-9PMAc",
+      authDomain: "espmonitoring-a9cc6.firebaseapp.com",
+      databaseURL:
+        "https://espmonitoring-a9cc6-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "espmonitoring-a9cc6",
+      storageBucket: "espmonitoring-a9cc6.appspot.com",
+      messagingSenderId: "222908994805",
+      appId: "1:222908994805:web:997dde23bdc354a03721bc",
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    firebase
+      .database()
+      .ref("UsersData/RDuRSIRkMpVv2Ctn3HDK99oJv3D3/readings/")
+      .on("value", (snapshot) => {
+        (snapshot.val());
+        let item = document.getElementById("test")
+        //  console.log(snapshot.val()[1])
+        //  console.log(Object.keys(snapshot.val()).sort().pop())
+        let timestamp = Object.keys(snapshot.val()).sort().pop()
+        // manipulate timespamp
+        let newDate = new Date();
+
+        newDate.setTime(timestamp * 1000);
+
+        let time = newDate.toUTCString();
+
+        //console.log(noise, timestamp);
+        item.innerText = time
+      });
+
+
+    firebase
+      .database()
+      .ref("UsersData/RDuRSIRkMpV22Cgn3HDK99oRv3D3/Weight/")
+      .on("value", (snapshot) => {
+        (snapshot.val());
+        let percentage = snapshot.val();
+        bar.set(
+          percentage,
+          true
+        );
+      });
+
+    function neshtosi() {
+
+      var list = []
+
+      firebase
+        .database()
+        .ref("UsersData/RDuRSIRkMpVv2Ctn3HDK99oJv3D3/readings/")
+        .on("value", (snapshot) => {
+          (snapshot.val());
+          let dates = document.getElementById("dates")
+          let timestamps = Object.keys(snapshot.val())
+          // manipulate timestamp
+
+          timestamps.forEach(function (key) {
+            let newDate = new Date();
+
+            newDate.setTime(key * 1000);
+            let time = newDate.toUTCString();
+            list.push(time);
+
+          });
+          console.log(list)
+
+          return list
+
+        });
+    }
+
+    neshtosi()
+
+  </script>
+</body>
